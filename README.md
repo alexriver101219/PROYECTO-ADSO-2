@@ -1,6 +1,22 @@
 # PROYECTO ADSO 2
 
+[![CI](https://github.com/alexriver101219/PROYECTO-ADSO-2/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/alexriver101219/PROYECTO-ADSO-2/actions/workflows/ci.yml)
+[![Docker Publish](https://github.com/alexriver101219/PROYECTO-ADSO-2/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/alexriver101219/PROYECTO-ADSO-2/actions/workflows/docker-publish.yml)
+
+![Banner](./assets/repo-banner.svg)
+
 API y portal web para consultas, solicitudes y descargas, construido con `Node.js`, `TypeScript`, `Fastify`, `Prisma` y `SQLite`.
+
+## Resumen
+
+Este proyecto centraliza el ciclo completo de solicitudes de usuario:
+
+- autenticacion segura con JWT
+- gestion de solicitudes con trazabilidad
+- control de estados por rol
+- adjuntos protegidos y descargables
+- portal web integrado
+- automatizacion CI y publicacion de imagen Docker
 
 ## Caracteristicas
 
@@ -22,6 +38,8 @@ API y portal web para consultas, solicitudes y descargas, construido con `Node.j
 - Auth: `@fastify/jwt`
 - Uploads: `@fastify/multipart`
 - Testing: `Vitest` + `Supertest`
+- Contenedores: `Docker`
+- CI/CD: `GitHub Actions`
 
 ## Estructura
 
@@ -41,6 +59,7 @@ tests/
 
 - Node.js 20+
 - npm
+- Docker opcional para despliegue por contenedor
 
 ## Configuracion
 
@@ -60,6 +79,15 @@ copy .env.example .env
 
 ```bash
 npm run db:seed
+```
+
+## Uso rapido
+
+```bash
+npm install
+copy .env.example .env
+npm run db:seed
+npm start
 ```
 
 ## Ejecucion
@@ -93,11 +121,25 @@ npm start
 ```bash
 npm run build
 npm run dev
-npm run start
-npm run test
+npm start
+npm test
 npm run db:seed
 npm run prisma:generate
 ```
+
+## Docker
+
+Construccion local:
+
+```bash
+docker build -t proyecto-adso-2 .
+docker run -p 3000:3000 --env-file .env proyecto-adso-2
+```
+
+Publicacion automatica:
+
+- El workflow `Publish Docker Image` publica una imagen en `ghcr.io/alexriver101219/proyecto-adso-2`
+- Se ejecuta automaticamente en cada push a `main`
 
 ## Postman
 
@@ -123,4 +165,4 @@ npm test
 
 ## Estado
 
-Proyecto funcional con backend, frontend basico, coleccion Postman y pruebas pasando.
+Proyecto funcional con backend, frontend basico, coleccion Postman, CI con GitHub Actions y publicacion de imagen Docker.

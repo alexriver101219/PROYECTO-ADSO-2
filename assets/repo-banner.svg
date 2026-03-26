@@ -1,0 +1,39 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCF6EA"/>
+      <stop offset="0.5" stop-color="#F1E7D6"/>
+      <stop offset="1" stop-color="#E7F0EA"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="774" y1="138" x2="977" y2="399" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1F7A5F"/>
+      <stop offset="1" stop-color="#D48F43"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFFDF8" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#F7EEDC" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" rx="32" fill="url(#bg)"/>
+  <circle cx="1136" cy="122" r="92" fill="#E6D5B7" fill-opacity="0.55"/>
+  <circle cx="1094" cy="184" r="28" fill="#D48F43" fill-opacity="0.24"/>
+  <circle cx="163" cy="529" r="108" fill="#1F7A5F" fill-opacity="0.08"/>
+  <rect x="46" y="46" width="1188" height="548" rx="30" fill="url(#panel)" stroke="#1F1E1A" stroke-opacity="0.08"/>
+  <text x="92" y="150" fill="#145341" font-family="Georgia, serif" font-size="28" letter-spacing="6">CONSULTAS, SOLICITUDES Y DESCARGAS</text>
+  <text x="92" y="252" fill="#1F1E1A" font-family="Georgia, serif" font-size="76" font-weight="700">Portal Seguro</text>
+  <text x="92" y="334" fill="#1F1E1A" font-family="Georgia, serif" font-size="76" font-weight="700">y Trazable</text>
+  <text x="92" y="398" fill="#6B665D" font-family="Georgia, serif" font-size="28">API REST con autenticacion JWT, historial de estados,</text>
+  <text x="92" y="438" fill="#6B665D" font-family="Georgia, serif" font-size="28">adjuntos protegidos, portal web integrado y CI automatizado.</text>
+  <rect x="92" y="480" width="176" height="46" rx="23" fill="#1F7A5F" fill-opacity="0.12"/>
+  <text x="122" y="510" fill="#145341" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2">JWT SECURITY</text>
+  <rect x="286" y="480" width="186" height="46" rx="23" fill="#D48F43" fill-opacity="0.14"/>
+  <text x="316" y="510" fill="#7A4E18" font-family="Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="2">AUDIT HISTORY</text>
+  <rect x="740" y="120" width="404" height="374" rx="34" fill="#FFF9EF" stroke="#1F1E1A" stroke-opacity="0.08"/>
+  <path d="M942 178L1050 219V295C1050 373 1004 430 942 455C880 430 834 373 834 295V219L942 178Z" fill="url(#shield)"/>
+  <path d="M942 210L1015 238V295C1015 350 984 392 942 413C900 392 869 350 869 295V238L942 210Z" fill="#FFFAF1"/>
+  <path d="M942 262C964 262 981 279 981 301V315H993C1001 315 1007 321 1007 329V373C1007 381 1001 387 993 387H891C883 387 877 381 877 373V329C877 321 883 315 891 315H903V301C903 279 920 262 942 262ZM942 284C932 284 923 291 923 301V315H961V301C961 291 952 284 942 284Z" fill="#1F1E1A"/>
+  <path d="M784 236H836" stroke="#D48F43" stroke-width="14" stroke-linecap="round" stroke-opacity="0.72"/>
+  <path d="M788 282H824" stroke="#1F7A5F" stroke-width="14" stroke-linecap="round" stroke-opacity="0.52"/>
+  <path d="M1064 344H1114" stroke="#1F7A5F" stroke-width="14" stroke-linecap="round" stroke-opacity="0.6"/>
+  <path d="M1076 392H1132" stroke="#D48F43" stroke-width="14" stroke-linecap="round" stroke-opacity="0.78"/>
+</svg>
