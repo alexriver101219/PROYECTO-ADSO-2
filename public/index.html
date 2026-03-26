@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de Solicitudes</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy-block">
+          <p class="eyebrow">Consultas, solicitudes y descargas</p>
+          <h1>Portal operativo para usuarios y administradores</h1>
+          <p class="hero-copy">
+            Registra solicitudes, consulta estados, revisa historial y gestiona
+            adjuntos desde una sola interfaz conectada a la API.
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 420 320" role="img">
+            <defs>
+              <linearGradient id="shieldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1f7a5f" />
+                <stop offset="100%" stop-color="#d48f43" />
+              </linearGradient>
+              <linearGradient id="panelTone" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fffdf8" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#f2e8d4" stop-opacity="0.9" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="36" width="360" height="248" rx="28" fill="url(#panelTone)" stroke="rgba(31,30,26,0.08)" />
+            <circle cx="330" cy="82" r="20" fill="#efe3c6" />
+            <circle cx="356" cy="108" r="8" fill="#d48f43" fill-opacity="0.55" />
+            <path d="M212 76L286 104V156C286 210 254 249 212 266C170 249 138 210 138 156V104L212 76Z" fill="url(#shieldGlow)" opacity="0.96" />
+            <path d="M212 98L264 118V156C264 195 242 225 212 239C182 225 160 195 160 156V118L212 98Z" fill="#fffaf1" opacity="0.95" />
+            <path d="M212 132C228 132 240 144 240 160V170H248C253 170 256 173 256 178V208C256 213 253 216 248 216H176C171 216 168 213 168 208V178C168 173 171 170 176 170H184V160C184 144 196 132 212 132ZM212 148C205 148 200 153 200 160V170H224V160C224 153 219 148 212 148Z" fill="#1f1e1a" opacity="0.88" />
+            <path d="M86 118H132" stroke="#d48f43" stroke-width="10" stroke-linecap="round" opacity="0.7" />
+            <path d="M90 154H122" stroke="#1f7a5f" stroke-width="10" stroke-linecap="round" opacity="0.5" />
+            <path d="M298 214H338" stroke="#1f7a5f" stroke-width="10" stroke-linecap="round" opacity="0.55" />
+            <path d="M306 248H352" stroke="#d48f43" stroke-width="10" stroke-linecap="round" opacity="0.7" />
+            <path d="M94 232C110 210 127 204 152 204" stroke="#1f1e1a" stroke-width="8" stroke-linecap="round" opacity="0.12" />
+          </svg>
+          <div class="hero-security-note">
+            <span class="security-chip">Seguridad activa</span>
+            <p>Trazabilidad, autenticacion JWT y control de adjuntos protegidos.</p>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a class="ghost-button" href="/docs" target="_blank" rel="noreferrer">
+            Abrir Swagger
+          </a>
+          <button class="accent-button" id="refreshButton" type="button">
+            Actualizar panel
+          </button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel auth-panel">
+          <div class="panel-header">
+            <h2>Acceso</h2>
+            <span id="sessionBadge" class="badge">Sin sesion</span>
+          </div>
+
+          <div class="auth-tabs">
+            <button class="tab-button active" id="loginTab" type="button">
+              Iniciar sesion
+            </button>
+            <button class="tab-button" id="registerTab" type="button">
+              Registrarse
+            </button>
+          </div>
+
+          <form id="loginForm" class="stack">
+            <label>
+              Email
+              <input id="loginEmail" type="email" required value="admin@example.com" />
+            </label>
+            <label>
+              Contrasena
+              <input id="loginPassword" type="password" required value="Admin123!" />
+            </label>
+            <button class="accent-button" type="submit">Entrar</button>
+          </form>
+
+          <form id="registerForm" class="stack hidden">
+            <label>
+              Nombre
+              <input id="registerName" type="text" required />
+            </label>
+            <label>
+              Email
+              <input id="registerEmail" type="email" required />
+            </label>
+            <label>
+              Contrasena
+              <input id="registerPassword" type="password" minlength="8" required />
+            </label>
+            <button class="accent-button" type="submit">Crear cuenta</button>
+          </form>
+
+          <div class="session-card hidden" id="sessionCard">
+            <p class="session-name" id="currentUserName"></p>
+            <p class="session-meta" id="currentUserMeta"></p>
+            <button class="ghost-button" id="logoutButton" type="button">
+              Cerrar sesion
+            </button>
+          </div>
+
+          <div class="notice">
+            <strong>Demo admin:</strong>
+            <span>`admin@example.com` / `Admin123!`</span>
+          </div>
+        </section>
+
+        <section class="panel request-panel">
+          <div class="panel-header">
+            <h2>Solicitudes</h2>
+            <span class="muted" id="requestCount">0 registros</span>
+          </div>
+
+          <form id="requestForm" class="stack hidden">
+            <label>
+              Titulo
+              <input id="requestTitle" type="text" maxlength="160" required />
+            </label>
+            <label>
+              Categoria
+              <input id="requestCategory" type="text" maxlength="120" required />
+            </label>
+            <label>
+              Descripcion
+              <textarea id="requestDescription" rows="4" maxlength="4000" required></textarea>
+            </label>
+            <button class="accent-button" type="submit">Crear solicitud</button>
+          </form>
+
+          <div class="filters hidden" id="filtersPanel">
+            <label>
+              Buscar
+              <input id="searchInput" type="search" placeholder="Titulo, categoria o descripcion" />
+            </label>
+            <label>
+              Estado
+              <select id="statusFilter">
+                <option value="">Todos</option>
+                <option value="PENDING">PENDING</option>
+                <option value="IN_REVIEW">IN_REVIEW</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="REJECTED">REJECTED</option>
+                <option value="CANCELLED">CANCELLED</option>
+                <option value="COMPLETED">COMPLETED</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="requestList" class="request-list">
+            <div class="empty-state">
+              Inicia sesion para ver y gestionar solicitudes.
+            </div>
+          </div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-header">
+            <h2>Detalle</h2>
+            <span class="muted" id="detailHint">Sin seleccion</span>
+          </div>
+
+          <div id="detailCard" class="detail-card">
+            <div class="empty-state">
+              Selecciona una solicitud para ver historial, adjuntos y acciones.
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <section id="messageBanner" class="message-banner hidden"></section>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

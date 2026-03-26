@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "fdb9ea52-41d4-44c4-a15d-portal-api",
+    "name": "Consultas Solicitudes y Descargas API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Coleccion para probar autenticacion, solicitudes, historial y adjuntos de la API."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:3000" },
+    { "key": "token", "value": "" },
+    { "key": "requestId", "value": "" },
+    { "key": "attachmentId", "value": "" },
+    { "key": "userEmail", "value": "usuario1@example.com" },
+    { "key": "userPassword", "value": "Password123!" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "Register User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const body = pm.response.json();",
+              "  pm.collectionVariables.set('token', body.token);",
+              "  pm.test('user registered', function () { pm.expect(body.user.email).to.eql(pm.collectionVariables.get('userEmail')); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Usuario Demo\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+      }
+    },
+    {
+      "name": "Login Admin",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const body = pm.response.json();",
+              "  pm.collectionVariables.set('token', body.token);",
+              "  pm.test('admin logged in', function () { pm.expect(body.user.role).to.eql('ADMIN'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin123!\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+      }
+    },
+    {
+      "name": "Get Me",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+      }
+    },
+    {
+      "name": "Create Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const body = pm.response.json();",
+              "  pm.collectionVariables.set('requestId', body.id);",
+              "  pm.test('request created', function () { pm.expect(body.status).to.eql('PENDING'); });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Solicitud desde Postman\",\n  \"description\": \"Esta solicitud fue creada para validar el flujo completo de la API.\",\n  \"category\": \"Pruebas\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/requests", "host": ["{{baseUrl}}"], "path": ["requests"] }
+      }
+    },
+    {
+      "name": "List Requests",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/requests", "host": ["{{baseUrl}}"], "path": ["requests"] }
+      }
+    },
+    {
+      "name": "Get Request Detail",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/requests/{{requestId}}", "host": ["{{baseUrl}}"], "path": ["requests", "{{requestId}}"] }
+      }
+    },
+    {
+      "name": "Update Request Status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_REVIEW\",\n  \"note\": \"Cambio de estado desde Postman\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/requests/{{requestId}}/status", "host": ["{{baseUrl}}"], "path": ["requests", "{{requestId}}", "status"] }
+      }
+    },
+    {
+      "name": "Get History",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/requests/{{requestId}}/history", "host": ["{{baseUrl}}"], "path": ["requests", "{{requestId}}", "history"] }
+      }
+    },
+    {
+      "name": "Upload Attachment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "  const body = pm.response.json();",
+              "  pm.collectionVariables.set('attachmentId', body.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/requests/{{requestId}}/attachments", "host": ["{{baseUrl}}"], "path": ["requests", "{{requestId}}", "attachments"] }
+      }
+    },
+    {
+      "name": "List Attachments",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/requests/{{requestId}}/attachments", "host": ["{{baseUrl}}"], "path": ["requests", "{{requestId}}", "attachments"] }
+      }
+    },
+    {
+      "name": "Download Attachment",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{baseUrl}}/attachments/{{attachmentId}}/download", "host": ["{{baseUrl}}"], "path": ["attachments", "{{attachmentId}}", "download"] }
+      }
+    }
+  ]
+}

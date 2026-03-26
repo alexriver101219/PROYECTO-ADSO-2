@@ -1,0 +1,12 @@
+node_modules
+.codex
+# Keep environment variables out of version control
+.env
+
+dist
+coverage
+storage/uploads
+dev.db
+dev.db-journal
+prisma/dev.db
+prisma/dev.db-journal
