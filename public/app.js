@@ -5,6 +5,7 @@ const state = {
   selectedRequestId: null,
   history: [],
   attachments: [],
+  users: [],
 };
 
 const ui = {
@@ -28,6 +29,11 @@ const ui = {
   requestDescription: document.getElementById("requestDescription"),
   requestList: document.getElementById("requestList"),
   requestCount: document.getElementById("requestCount"),
+  usersPanel: document.getElementById("usersPanel"),
+  userList: document.getElementById("userList"),
+  userCount: document.getElementById("userCount"),
+  userSearchInput: document.getElementById("userSearchInput"),
+  userRoleFilter: document.getElementById("userRoleFilter"),
   filtersPanel: document.getElementById("filtersPanel"),
   searchInput: document.getElementById("searchInput"),
   statusFilter: document.getElementById("statusFilter"),
@@ -88,6 +94,7 @@ function clearSession() {
   state.selectedRequestId = null;
   state.history = [];
   state.attachments = [];
+  state.users = [];
   localStorage.removeItem("portalToken");
   render();
 }
@@ -150,6 +157,24 @@ async function fetchRequests() {
   await fetchRequestDetail();
 }
 
+async function fetchUsers() {
+  if (!state.user || state.user.role !== "ADMIN") {
+    state.users = [];
+    return;
+  }
+
+  const params = new URLSearchParams();
+  if (ui.userSearchInput.value.trim()) {
+    params.set("search", ui.userSearchInput.value.trim());
+  }
+  if (ui.userRoleFilter.value) {
+    params.set("role", ui.userRoleFilter.value);
+  }
+
+  const query = params.toString();
+  state.users = await api(`/users${query ? `?${query}` : ""}`);
+}
+
 async function fetchRequestDetail() {
   const current = selectedRequest();
   if (!current || !state.user) {
@@ -205,7 +230,7 @@ function renderAuth() {
   ui.sessionBadge.textContent = state.user.role;
   ui.sessionBadge.className = `badge ${state.user.role === "ADMIN" ? "admin" : ""}`.trim();
   ui.currentUserName.textContent = state.user.name;
-  ui.currentUserMeta.textContent = `${state.user.email} · ${state.user.role}`;
+  ui.currentUserMeta.textContent = `${state.user.email} - ${state.user.role}`;
 }
 
 function renderRequests() {
@@ -232,7 +257,7 @@ function renderRequests() {
             ${requestStatusPill(item.status)}
           </div>
           <p>${item.description}</p>
-          <p class="meta">${item.category} · ${item.owner.name}</p>
+          <p class="meta">${item.category} - ${item.owner.name}</p>
           <p class="meta">${formatDate(item.createdAt)}</p>
         </article>
       `;
@@ -246,6 +271,49 @@ function renderRequests() {
       render();
     });
   }
+}
+
+function renderUsers() {
+  const canViewUsers = state.user?.role === "ADMIN";
+  ui.usersPanel.classList.toggle("hidden", !canViewUsers);
+
+  if (!canViewUsers) {
+    ui.userCount.textContent = "0 usuarios";
+    ui.userList.innerHTML = '<div class="empty-state">Inicia sesion como administrador para ver usuarios.</div>';
+    return;
+  }
+
+  ui.userCount.textContent = `${state.users.length} usuarios`;
+
+  if (!state.users.length) {
+    ui.userList.innerHTML = '<div class="empty-state">No hay usuarios para los filtros actuales.</div>';
+    return;
+  }
+
+  ui.userList.innerHTML = state.users
+    .map((user) => {
+      const initials = user.name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("");
+
+      return `
+        <article class="user-card">
+          <div class="user-avatar">${initials || "U"}</div>
+          <div>
+            <h3>${user.name}</h3>
+            <p class="meta">${user.email}</p>
+            <footer>
+              <span class="badge ${user.role === "ADMIN" ? "admin" : ""}">${user.role}</span>
+              <span class="meta">Creado: ${formatDate(user.createdAt)}</span>
+            </footer>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderDetail() {
@@ -264,7 +332,7 @@ function renderDetail() {
       <div class="request-head">
         <div>
           <h3>${current.title}</h3>
-          <p class="meta">${current.category} · ${current.owner.name}</p>
+          <p class="meta">${current.category} - ${current.owner.name}</p>
         </div>
         ${requestStatusPill(current.status)}
       </div>
@@ -333,7 +401,7 @@ function renderDetail() {
                         <strong>${item.originalName}</strong>
                         <button class="link-button" data-download-id="${item.id}" type="button">Descargar</button>
                       </div>
-                      <p class="attachment-meta">${item.mimeType} · ${item.size} bytes</p>
+                      <p class="attachment-meta">${item.mimeType} - ${item.size} bytes</p>
                       <p class="attachment-meta">Subido por ${item.uploadedBy.name}</p>
                     </article>
                   `,
@@ -367,6 +435,7 @@ function renderDetail() {
 function render() {
   renderAuth();
   renderRequests();
+  renderUsers();
   renderDetail();
 }
 
@@ -378,7 +447,7 @@ async function initializeSession() {
 
   try {
     await fetchMe();
-    await fetchRequests();
+    await Promise.all([fetchRequests(), fetchUsers()]);
   } catch (error) {
     setMessage(error.message, true);
   }
@@ -400,7 +469,7 @@ async function handleLogin(event) {
 
     saveSession(payload.token);
     state.user = payload.user;
-    await fetchRequests();
+    await Promise.all([fetchRequests(), fetchUsers()]);
     render();
     setMessage("Sesion iniciada correctamente.");
   } catch (error) {
@@ -424,7 +493,7 @@ async function handleRegister(event) {
     saveSession(payload.token);
     state.user = payload.user;
     ui.registerForm.reset();
-    await fetchRequests();
+    await Promise.all([fetchRequests(), fetchUsers()]);
     render();
     setMessage("Cuenta creada y sesion iniciada.");
   } catch (error) {
@@ -561,7 +630,7 @@ ui.logoutButton.addEventListener("click", () => {
 ui.refreshButton.addEventListener("click", async () => {
   try {
     if (state.user) {
-      await fetchRequests();
+      await Promise.all([fetchRequests(), fetchUsers()]);
     }
     render();
     setMessage("Panel actualizado.");
@@ -583,5 +652,20 @@ ui.statusFilter.addEventListener("change", async () => {
   await fetchRequests();
   render();
 });
+ui.userSearchInput.addEventListener("input", async () => {
+  if (state.user?.role !== "ADMIN") {
+    return;
+  }
+  await fetchUsers();
+  render();
+});
+ui.userRoleFilter.addEventListener("change", async () => {
+  if (state.user?.role !== "ADMIN") {
+    return;
+  }
+  await fetchUsers();
+  render();
+});
 
 initializeSession();
+

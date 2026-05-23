@@ -157,6 +157,39 @@ describe("Consultas API", () => {
     expect(otherDetail.status).toBe(404);
   });
 
+  it("lists users for admins only", async () => {
+    const user = await registerUser("Regular User", "regular@example.com");
+    await registerUser("Second User", "second@example.com");
+    const adminToken = await loginAdmin();
+
+    const forbidden = await api
+      .get("/users")
+      .set("Authorization", `Bearer ${user.token}`);
+
+    expect(forbidden.status).toBe(403);
+
+    const users = await api
+      .get("/users")
+      .set("Authorization", `Bearer ${adminToken}`);
+
+    expect(users.status).toBe(200);
+    expect(users.body.map((item: { email: string }) => item.email)).toEqual(
+      expect.arrayContaining([
+        "admin@example.com",
+        "regular@example.com",
+        "second@example.com",
+      ]),
+    );
+
+    const filtered = await api
+      .get("/users?role=USER&search=regular")
+      .set("Authorization", `Bearer ${adminToken}`);
+
+    expect(filtered.status).toBe(200);
+    expect(filtered.body).toHaveLength(1);
+    expect(filtered.body[0].email).toBe("regular@example.com");
+  });
+
   it("enforces status transition rules for users and admins", async () => {
     const owner = await registerUser("Owner", "owner2@example.com");
     const adminToken = await loginAdmin();

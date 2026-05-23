@@ -164,6 +164,34 @@
           </div>
         </section>
 
+        <section class="panel users-panel hidden" id="usersPanel">
+          <div class="panel-header">
+            <h2>Usuarios</h2>
+            <span class="muted" id="userCount">0 usuarios</span>
+          </div>
+
+          <div class="filters">
+            <label>
+              Buscar usuario
+              <input id="userSearchInput" type="search" placeholder="Nombre o correo" />
+            </label>
+            <label>
+              Rol
+              <select id="userRoleFilter">
+                <option value="">Todos</option>
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="userList" class="user-list">
+            <div class="empty-state">
+              Inicia sesion como administrador para ver usuarios.
+            </div>
+          </div>
+        </section>
+
         <section class="panel detail-panel">
           <div class="panel-header">
             <h2>Detalle</h2>

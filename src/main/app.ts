@@ -10,6 +10,7 @@ import { authRoutes } from "../modules/auth/routes";
 import { attachmentRoutes } from "../modules/attachments/routes";
 import { frontendRoutes } from "../modules/frontend/routes";
 import { requestRoutes } from "../modules/requests/routes";
+import { userRoutes } from "../modules/users/routes";
 import { AppError } from "../lib/errors";
 import { ensureDefaultAdmin, initializeDatabase } from "../lib/prisma";
 import { buildAppConfig, type BuildAppOptions } from "./build-app-config";
@@ -108,6 +109,7 @@ export async function buildApp(options: BuildAppOptions = {}) {
   );
 
   await app.register(authRoutes);
+  await app.register(userRoutes);
   await app.register(requestRoutes);
   await app.register(attachmentRoutes);
   await app.register(frontendRoutes);
