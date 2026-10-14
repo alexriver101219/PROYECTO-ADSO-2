@@ -94,11 +94,13 @@ describe("Consultas API", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("serves the frontend shell", async () => {
-    const response = await api.get("/");
+  it("serves API health and documentation", async () => {
+    const health = await api.get("/health");
+    const docs = await api.get("/docs");
 
-    expect(response.status).toBe(200);
-    expect(response.text).toContain("Portal de Solicitudes");
+    expect(health.status).toBe(200);
+    expect(health.body).toEqual({ status: "ok" });
+    expect(docs.status).toBe(200);
   });
 
   it("registers, logs in, and returns the current user", async () => {

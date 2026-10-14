@@ -4,7 +4,9 @@
   "description": "API de consultas, solicitudes y descargas.",
   "main": "dist/main/server.js",
   "scripts": {
-    "dev": "tsx watch src/main/server.ts",
+    "dev": "node scripts/dev-all.mjs",
+    "dev:backend": "tsx watch src/main/server.ts",
+    "dev:frontend": "node scripts/serve-frontend.mjs",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main/server.js",
     "test": "vitest run --pool=threads",

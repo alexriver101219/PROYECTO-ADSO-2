@@ -8,7 +8,6 @@ import swaggerUi from "@fastify/swagger-ui";
 
 import { authRoutes } from "../modules/auth/routes";
 import { attachmentRoutes } from "../modules/attachments/routes";
-import { frontendRoutes } from "../modules/frontend/routes";
 import { requestRoutes } from "../modules/requests/routes";
 import { userRoutes } from "../modules/users/routes";
 import { AppError } from "../lib/errors";
@@ -21,6 +20,30 @@ export async function buildApp(options: BuildAppOptions = {}) {
 
   const app = fastify({
     logger: options.logger ?? config.nodeEnv !== "test",
+  });
+
+  const allowedOrigins = new Set([
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+  ]);
+
+  app.addHook("onRequest", async (request, reply) => {
+    const origin = request.headers.origin;
+
+    if (origin && allowedOrigins.has(origin)) {
+      reply.header("Access-Control-Allow-Origin", origin);
+      reply.header("Vary", "Origin");
+    }
+
+    reply.header("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+    reply.header(
+      "Access-Control-Allow-Headers",
+      "Content-Type,Authorization",
+    );
+
+    if (request.method === "OPTIONS") {
+      return reply.code(204).send();
+    }
   });
 
   app.decorate("prisma", prisma as PrismaClient);
@@ -112,7 +135,6 @@ export async function buildApp(options: BuildAppOptions = {}) {
   await app.register(userRoutes);
   await app.register(requestRoutes);
   await app.register(attachmentRoutes);
-  await app.register(frontendRoutes);
 
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError) {

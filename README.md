@@ -92,10 +92,17 @@ npm start
 
 ## Ejecucion
 
-Modo desarrollo:
+Modo desarrollo completo:
 
 ```bash
 npm run dev
+```
+
+Tambien puedes iniciar cada parte por separado:
+
+```bash
+npm run dev:backend
+npm run dev:frontend
 ```
 
 Modo compilado:
@@ -107,7 +114,8 @@ npm start
 
 ## URLs
 
-- Portal: `http://127.0.0.1:3000/`
+- Frontend: `http://127.0.0.1:5173/`
+- API: `http://127.0.0.1:3000/`
 - Swagger: `http://127.0.0.1:3000/docs`
 - Health: `http://127.0.0.1:3000/health`
 

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexa | Portal de Solicitudes</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy-block">
+          <p class="eyebrow">Consultas, solicitudes y descargas</p>
+          <h1>Nexa</h1>
+          <p class="hero-copy">
+            Portal operativo para registrar solicitudes, consultar estados,
+            revisar historial y gestionar adjuntos desde una interfaz conectada
+            a la API.
+          </p>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <img
+            src="/assets/operations-dashboard.svg"
+            alt=""
+            width="960"
+            height="640"
+          />
+          <div class="hero-security-note">
+            <span class="security-chip">Seguridad activa</span>
+            <p>Trazabilidad, autenticacion JWT y control de adjuntos protegidos.</p>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a class="ghost-button" href="http://127.0.0.1:3000/docs" target="_blank" rel="noreferrer">
+            Abrir Swagger
+          </a>
+          <button class="accent-button" id="refreshButton" type="button">
+            Actualizar panel
+          </button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel auth-panel">
+          <div class="panel-header">
+            <h2>Acceso</h2>
+            <span id="sessionBadge" class="badge">Sin sesion</span>
+          </div>
+
+          <div class="auth-tabs">
+            <button class="tab-button active" id="loginTab" type="button">
+              Iniciar sesion
+            </button>
+            <button class="tab-button" id="registerTab" type="button">
+              Registrarse
+            </button>
+          </div>
+
+          <form id="loginForm" class="stack">
+            <label>
+              Email
+              <input id="loginEmail" type="email" required value="admin@example.com" />
+            </label>
+            <label>
+              Contrasena
+              <input id="loginPassword" type="password" required value="Admin123!" />
+            </label>
+            <button class="accent-button" type="submit">Entrar</button>
+          </form>
+
+          <form id="registerForm" class="stack hidden">
+            <label>
+              Nombre
+              <input id="registerName" type="text" required />
+            </label>
+            <label>
+              Email
+              <input id="registerEmail" type="email" required />
+            </label>
+            <label>
+              Contrasena
+              <input id="registerPassword" type="password" minlength="8" required />
+            </label>
+            <button class="accent-button" type="submit">Crear cuenta</button>
+          </form>
+
+          <div class="session-card hidden" id="sessionCard">
+            <p class="session-name" id="currentUserName"></p>
+            <p class="session-meta" id="currentUserMeta"></p>
+            <button class="ghost-button" id="logoutButton" type="button">
+              Cerrar sesion
+            </button>
+          </div>
+
+          <div class="notice">
+            <strong>Demo admin:</strong>
+            <span>`admin@example.com` / `Admin123!`</span>
+          </div>
+        </section>
+
+        <section class="panel request-panel">
+          <div class="panel-header">
+            <h2>Solicitudes</h2>
+            <span class="muted" id="requestCount">0 registros</span>
+          </div>
+
+          <form id="requestForm" class="stack hidden">
+            <label>
+              Titulo
+              <input id="requestTitle" type="text" maxlength="160" required />
+            </label>
+            <label>
+              Categoria
+              <input id="requestCategory" type="text" maxlength="120" required />
+            </label>
+            <label>
+              Descripcion
+              <textarea id="requestDescription" rows="4" maxlength="4000" required></textarea>
+            </label>
+            <button class="accent-button" type="submit">Crear solicitud</button>
+          </form>
+
+          <div class="filters hidden" id="filtersPanel">
+            <label>
+              Buscar
+              <input id="searchInput" type="search" placeholder="Titulo, categoria o descripcion" />
+            </label>
+            <label>
+              Estado
+              <select id="statusFilter">
+                <option value="">Todos</option>
+                <option value="PENDING">PENDING</option>
+                <option value="IN_REVIEW">IN_REVIEW</option>
+                <option value="APPROVED">APPROVED</option>
+                <option value="REJECTED">REJECTED</option>
+                <option value="CANCELLED">CANCELLED</option>
+                <option value="COMPLETED">COMPLETED</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="requestList" class="request-list">
+            <div class="empty-state">
+              <img src="/assets/empty-requests.svg" alt="" width="320" height="220" />
+              Inicia sesion para ver y gestionar solicitudes.
+            </div>
+          </div>
+        </section>
+
+        <section class="panel users-panel hidden" id="usersPanel">
+          <div class="panel-header">
+            <h2>Usuarios</h2>
+            <span class="muted" id="userCount">0 usuarios</span>
+          </div>
+
+          <div class="filters">
+            <label>
+              Buscar usuario
+              <input id="userSearchInput" type="search" placeholder="Nombre o correo" />
+            </label>
+            <label>
+              Rol
+              <select id="userRoleFilter">
+                <option value="">Todos</option>
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="userList" class="user-list">
+            <div class="empty-state">
+              Inicia sesion como administrador para ver usuarios.
+            </div>
+          </div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-header">
+            <h2>Detalle</h2>
+            <span class="muted" id="detailHint">Sin seleccion</span>
+          </div>
+
+          <div id="detailCard" class="detail-card">
+            <div class="empty-state">
+              <img src="/assets/empty-detail.svg" alt="" width="320" height="220" />
+              Selecciona una solicitud para ver historial, adjuntos y acciones.
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <section id="messageBanner" class="message-banner hidden"></section>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

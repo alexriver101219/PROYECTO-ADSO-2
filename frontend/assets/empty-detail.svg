@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
+  <title id="title">Detalle de solicitud</title>
+  <desc id="desc">Panel preparado para mostrar historial, adjuntos y acciones.</desc>
+  <rect width="320" height="220" rx="28" fill="#f8fafc"/>
+  <rect x="58" y="48" width="204" height="124" rx="22" fill="#ffffff" stroke="#dbe3ea"/>
+  <rect x="86" y="78" width="88" height="12" rx="6" fill="#64748b"/>
+  <rect x="86" y="108" width="148" height="8" rx="4" fill="#cbd5e1"/>
+  <rect x="86" y="132" width="110" height="8" rx="4" fill="#cbd5e1"/>
+  <circle cx="242" cy="74" r="28" fill="#dbeafe"/>
+  <path d="M231 75h22M242 64v22" stroke="#2563eb" stroke-width="7" stroke-linecap="round"/>
+  <rect x="92" y="166" width="136" height="16" rx="8" fill="#e2e8f0"/>
+</svg>

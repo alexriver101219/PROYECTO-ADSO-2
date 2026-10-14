@@ -1,9 +1,16 @@
 import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { extname, resolve } from "node:path";
 
 import type { FastifyPluginAsync } from "fastify";
 
 const publicRoot = resolve(process.cwd(), "public");
+const assetContentTypes: Record<string, string> = {
+  ".svg": "image/svg+xml; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+};
 
 async function readPublicFile(fileName: string) {
   return readFile(resolve(publicRoot, fileName), "utf8");
@@ -26,4 +33,22 @@ export const frontendRoutes: FastifyPluginAsync = async (app) => {
       .type("application/javascript; charset=utf-8")
       .send(script);
   });
+
+  app.get<{ Params: { fileName: string } }>(
+    "/assets/:fileName",
+    async (request, reply) => {
+      const fileName = request.params.fileName;
+
+      if (fileName.includes("/") || fileName.includes("\\")) {
+        return reply.code(404).send({ message: "Asset not found." });
+      }
+
+      const asset = await readFile(resolve(publicRoot, "assets", fileName));
+      const contentType =
+        assetContentTypes[extname(fileName).toLowerCase()] ??
+        "application/octet-stream";
+
+      return reply.type(contentType).send(asset);
+    },
+  );
 };

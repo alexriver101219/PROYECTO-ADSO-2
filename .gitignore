@@ -5,6 +5,7 @@ node_modules
 
 dist
 coverage
+local-server*.log
 storage/uploads
 dev.db
 dev.db-journal

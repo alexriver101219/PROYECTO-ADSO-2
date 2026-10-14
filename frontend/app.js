@@ -1,3 +1,5 @@
+const API_BASE_URL = window.NEXA_API_URL ?? "http://127.0.0.1:3000";
+
 const state = {
   token: localStorage.getItem("portalToken") ?? "",
   user: null,
@@ -64,7 +66,7 @@ async function api(path, options = {}) {
     headers.set("Authorization", `Bearer ${state.token}`);
   }
 
-  const response = await fetch(path, {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
   });
@@ -236,14 +238,24 @@ function renderAuth() {
 function renderRequests() {
   if (!state.user) {
     ui.requestCount.textContent = "0 registros";
-    ui.requestList.innerHTML = '<div class="empty-state">Inicia sesion para ver y gestionar solicitudes.</div>';
+    ui.requestList.innerHTML = `
+      <div class="empty-state">
+        <img src="/assets/empty-requests.svg" alt="" width="320" height="220" />
+        <span>Inicia sesion para ver y gestionar solicitudes.</span>
+      </div>
+    `;
     return;
   }
 
   ui.requestCount.textContent = `${state.requests.length} registros`;
 
   if (!state.requests.length) {
-    ui.requestList.innerHTML = '<div class="empty-state">No hay solicitudes para los filtros actuales.</div>';
+    ui.requestList.innerHTML = `
+      <div class="empty-state">
+        <img src="/assets/empty-requests.svg" alt="" width="320" height="220" />
+        <span>No hay solicitudes para los filtros actuales.</span>
+      </div>
+    `;
     return;
   }
 
@@ -320,7 +332,12 @@ function renderDetail() {
   const current = selectedRequest();
   if (!current || !state.user) {
     ui.detailHint.textContent = "Sin seleccion";
-    ui.detailCard.innerHTML = '<div class="empty-state">Selecciona una solicitud para ver historial, adjuntos y acciones.</div>';
+    ui.detailCard.innerHTML = `
+      <div class="empty-state">
+        <img src="/assets/empty-detail.svg" alt="" width="320" height="220" />
+        <span>Selecciona una solicitud para ver historial, adjuntos y acciones.</span>
+      </div>
+    `;
     return;
   }
 
@@ -581,7 +598,7 @@ async function handleAttachmentUpload(event) {
 
 async function downloadAttachment(attachmentId) {
   try {
-    const response = await fetch(`/attachments/${attachmentId}/download`, {
+    const response = await fetch(`${API_BASE_URL}/attachments/${attachmentId}/download`, {
       headers: {
         Authorization: `Bearer ${state.token}`,
       },
